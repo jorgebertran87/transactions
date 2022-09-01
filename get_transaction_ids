@@ -1,0 +1,13 @@
+#!/bin/bash
+
+source ./auth
+
+DATE_FROM="$1"
+DATE_TO="$2"
+
+source ./filter_transactions "$DATE_FROM" "$DATE_TO"
+
+
+QUERY=".transactionId"
+
+cat transactions_filtered.json | jq -r "$QUERY" | sort | uniq

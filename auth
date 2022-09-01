@@ -1,0 +1,9 @@
+#!/bin/bash
+
+source .env
+
+ACCESS_TOKEN=$(curl -X POST -s "https://ob.nordigen.com/api/v2/token/new/" \
+  -H "accept: application/json" \
+  -H  "Content-Type: application/json" \
+  -d "{\"secret_id\":\"$SECRET_ID\", \"secret_key\":\"$SECRET_KEY\"}" \
+| sed -r "s/(.*)access\":\"//g;s/\",\"access_expires(.*)//g")

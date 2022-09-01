@@ -1,0 +1,10 @@
+#!/bin/bash
+
+CONCEPT="$1"
+
+QUERY=""
+if [[ "$CONCEPT" != "" ]]; then
+	QUERY="select(.transactionId==\"$CONCEPT\")"
+fi
+
+cat transactions_filtered.json | jq -r "$QUERY" | jq -r '.transactionAmount.amount' | tr "." "," | awk '{s+=$1} END {print s}'

@@ -1,0 +1,7 @@
+#!/bin/bash
+
+TRANSACTION_ID="$1"
+
+QUERY="select(.transactionId==\"$TRANSACTION_ID\")"
+
+cat transactions_filtered.json | jq -r "$QUERY" | jq -r '.creditorName'

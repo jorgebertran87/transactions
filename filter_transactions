@@ -1,0 +1,11 @@
+#!/bin/bash
+
+source ./auth
+
+DATE_FROM="$1"
+DATE_TO="$2"
+
+curl -X GET -s "https://ob.nordigen.com/api/v2/accounts/$ACCOUNT_ID/transactions/?date_from=$DATE_FROM&date_to=$DATE_TO" \
+  -H  "accept: application/json" \
+  -H  "Authorization: Bearer $ACCESS_TOKEN" | jq -r ".transactions.booked[]" > transactions.json && \
+cat transactions.json | jq -s "unique_by(.transactionId)" | jq -r ".[]" > transactions_filtered.json
