@@ -15,16 +15,21 @@ DEBER=0.0
 HABER=0.0
 for TRANSACTION_ID in $TRANSACTION_IDS; do
 	AMOUNT=$(./get_transaction_amount "$TRANSACTION_ID" | tr "," ".")
+	COLOR=$RED
+	if [[ $AMOUNT != "-"* ]]; then
+		COLOR=$GREEN
+	fi
+
 	CREDITOR_NAME=$(./get_transaction_creditorName "$TRANSACTION_ID")
 	REMITTANCE=$(./get_transaction_remittance "$TRANSACTION_ID")
 	if [[ "$CREDITOR_NAME" != "null" ]]; then
-		printf "Info: ${RED}$CREDITOR_NAME${NC}\n"
+		printf "Info: ${COLOR}$CREDITOR_NAME${NC}\n"
 	fi
 	if [[ "$REMITTANCE" != "null" ]]; then
-		printf "Info: ${RED}$REMITTANCE${NC}\n"
+		printf "Info: ${COLOR}$REMITTANCE${NC}\n"
 	fi
 
-	printf "Cantidad: ${RED}$AMOUNT €${NC}\n"
+	printf "Cantidad: ${COLOR}$AMOUNT €${NC}\n"
 	read -p "Añadir transacción? Yes/No [Y] " YesNo
 	if [[ "$YesNo" != *[Nn]* ]]; then
 		if [[ $AMOUNT != "-"* ]]; then

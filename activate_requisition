@@ -1,0 +1,28 @@
+#!/bin/bash
+
+source ./auth
+
+agreement=$(curl -X POST -s "$API_URL/agreements/enduser/" \
+  -H  "accept: application/json" \
+  -H  "Content-Type: application/json" \
+  -H  "Authorization: Bearer $ACCESS_TOKEN" \
+  -d "{\"institution_id\": \"$INSTITUTION_ID\", \"access_scope\": [\"balances\", \"details\", \"transactions\"]}")
+
+data=$(curl -X POST -s "$API_URL/requisitions/" \
+  -H "accept: application/json" \
+  -H  "Authorization: Bearer $ACCESS_TOKEN" \
+  -H  "Content-Type: application/json" \
+  -d "{\"redirect\": \"http://localhost\", \"institution_id\": \"$INSTITUTION_ID\"}")
+
+link=$(echo $data | jq -r ".link")
+
+xdg-open $link 2>/dev/null
+read -p "Da permisos en $link y pulsa enter"
+
+REQUISITION_ID=$(echo $data | jq -r ".id")
+
+data=$(curl -X GET -s "$API_URL/requisitions/$REQUISITION_ID/" \
+  -H  "accept: application/json" \
+  -H  "Authorization: Bearer $ACCESS_TOKEN")
+
+echo "Permisos dados para las cuentas: "$(echo $data | jq -r ".accounts")
