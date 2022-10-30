@@ -3,7 +3,7 @@
 DATE_FROM="$1"
 DATE_TO="$2"
 
-TRANSACTION_IDS=$(./get_transaction_ids "$DATE_FROM" "$DATE_TO")
+TRANSACTION_IDS=$(./application/get_transactions_amount/get_transaction_ids "$DATE_FROM" "$DATE_TO")
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -14,14 +14,14 @@ IFS=$'\n'
 DEBER=0.0
 HABER=0.0
 for TRANSACTION_ID in $TRANSACTION_IDS; do
-	AMOUNT=$(./get_transaction_amount "$TRANSACTION_ID" | tr "," ".")
+	AMOUNT=$(./application/get_transactions_amount/get_transaction_amount "$TRANSACTION_ID" | tr "," ".")
 	COLOR=$RED
 	if [[ $AMOUNT != "-"* ]]; then
 		COLOR=$GREEN
 	fi
 
-	CREDITOR_NAME=$(./get_transaction_creditorName "$TRANSACTION_ID")
-	REMITTANCE=$(./get_transaction_remittance "$TRANSACTION_ID")
+	CREDITOR_NAME=$(./application/get_transactions_amount/get_transaction_creditorName "$TRANSACTION_ID")
+	REMITTANCE=$(./application/get_transactions_amount/get_transaction_remittance "$TRANSACTION_ID")
 	if [[ "$CREDITOR_NAME" != "null" ]]; then
 		printf "Info: ${COLOR}$CREDITOR_NAME${NC}\n"
 	fi
