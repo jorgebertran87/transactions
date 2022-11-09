@@ -1,0 +1,23 @@
+HTTP/1.1 200 OK
+
+<html>
+    <head>
+        <script language="javascript">
+            var url = location.hostname + ':' + (parseInt(location.port) + 1);
+
+            let params = (new URL(document.location)).searchParams;
+            let ref = params.get("ref");
+            var ws = new WebSocket('ws://' + url);
+            ws.onopen = () => send_and_close();
+
+            send_and_close = () => { 
+                ws.send(ref); 
+                var messageElement = document.getElementById('message');
+                messageElement.innerHTML += 'Done! You can already close this page!'; 
+            }
+        </script>
+        <body>
+            <pre id="message"></pre>
+        </body>
+    <head>
+</html>

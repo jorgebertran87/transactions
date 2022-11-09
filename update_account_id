@@ -12,17 +12,33 @@ data=$(curl -X POST -s "$API_URL/requisitions/" \
   -H "accept: application/json" \
   -H  "Authorization: Bearer $ACCESS_TOKEN" \
   -H  "Content-Type: application/json" \
-  -d "{\"redirect\": \"http://localhost\", \"institution_id\": \"$INSTITUTION_ID\"}")
+  -d "{\"redirect\": \"http://127.0.0.1:6655\", \"institution_id\": \"$INSTITUTION_ID\"}")
 
 link=$(echo $data | jq -r ".link")
 
-xdg-open $link 2>/dev/null
-read -p "Da permisos en $link y pulsa enter"
-
 REQUISITION_ID=$(echo $data | jq -r ".id")
 
-data=$(curl -X GET -s "$API_URL/requisitions/$REQUISITION_ID/" \
+xdg-open $link 2>/dev/null
+
+./websocket $REQUISITION_ID
+
+result=$?
+
+if [ $result -eq 0 ]; then
+  data=$(curl -X GET -s "$API_URL/requisitions/$REQUISITION_ID/" \
   -H  "accept: application/json" \
   -H  "Authorization: Bearer $ACCESS_TOKEN")
 
-echo "Permisos dados para las cuentas: "$(echo $data | jq -r ".accounts")
+  sed -i '/^ACCOUNT_ID/d' .env
+
+  ACCOUNT_ID=$(echo $data | jq -r ".accounts[0]")
+
+  echo "ACCOUNT_ID=$ACCOUNT_ID" >> .env
+
+  echo "Account Id updated!"
+  exit
+fi
+
+echo "Error with process. Please try again"
+
+
